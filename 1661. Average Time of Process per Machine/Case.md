@@ -134,6 +134,7 @@ In Approach 2, we perform a **Single Pass** scan.
 
 **The Math Logic:**
 $$Average = \frac{\sum(End_1 - Start_1) + \sum(End_2 - Start_2)}{Count}$$
+
 $$Average = \frac{(\sum End_1 + \sum End_2) - (\sum Start_1 + \sum Start_2)}{Count}$$
 
 This converts a "Row Matching" problem into a simple "Summation" problem, which databases are extremely fast at computing.
