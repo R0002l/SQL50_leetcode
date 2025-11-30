@@ -6,9 +6,6 @@
  * 'w1' represents the current day, and 'w2' represents the previous day.
  */
 
--- ==========================================
--- Solution 1: MySQL Syntax (Using DATEDIFF)
--- ==========================================
 SELECT 
     w1.id
 FROM 
