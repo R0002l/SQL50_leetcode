@@ -99,7 +99,7 @@ ORDER BY
 
 ---
 
-## 🔍 Deep Dive
+## 4. 🔍 Deep Dive
 
 #### 1. The Modulo Operator (Mathematical Logic)
 The modulo operation finds the remainder or signed remainder of a division.
