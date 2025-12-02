@@ -145,3 +145,73 @@ Let $R$ be the number of ratings, $U$ be users, and $M$ be movies.
 | **3. Union** | Stack Results | $O(1)$ | Simply appends the two single-row results. |
 
 **Total Complexity:** Dominated by the sorting in both sub-queries. Indexes on `created_at` and `user_id`/`movie_id` significantly speed this up.
+
+
+---
+
+
+# 3 Common Ways to Filter by Month in SQL
+
+Filtering for a specific "Year and Month" (e.g., February 2020) generally falls into three approaches, each suitable for different scenarios.
+
+## A. Date Functions (Most Intuitive)
+Best for beginners and ad-hoc analysis; the code intent is the clearest.
+
+- **Syntax**: Uses `YEAR()` and `MONTH()` functions.
+- **Pros**: Very easy to read. No need to worry about the number of days in a month.
+- **Cons**: On large datasets, applying functions to a column prevents the database from using the **Index**, resulting in slower queries (Non-SARGable).
+
+```sql
+SELECT * FROM MovieRating
+WHERE YEAR(created_at) = 2020 
+  AND MONTH(created_at) = 2;
+```
+
+## B. String Matching (Common in LeetCode)
+Good for coding challenges or quick lookups; treats dates as text.
+
+- **Syntax**: Uses `LIKE` or `DATE_FORMAT`.
+- **Pros**: Concise and fast to type.
+- **Cons**: 
+    1. Relies on the database storage format being exactly `YYYY-MM-DD`.
+    2. Average performance; also prevents efficient index usage.
+
+```sql
+-- Method A: LIKE (Popular in LeetCode)
+SELECT * FROM MovieRating
+WHERE created_at LIKE '2020-02%';
+
+-- Method B: DATE_FORMAT
+SELECT * FROM MovieRating
+WHERE DATE_FORMAT(created_at, '%Y-%m') = '2020-02';
+```
+
+## C. Range Query (Best Performance)
+The standard for professional development and DBAs.
+
+- **Syntax**: Uses `>=` and `<` to define a time range.
+- **Technique**: **>= 1st of the month** AND **< 1st of the *next* month**.
+- **Pros**: **Highest Performance**. This is **SARGable** (Search ARGument ABLE), allowing the database to use indexes efficiently.
+- **Cons**: Verbose syntax; requires calculating the start date of the next month.
+
+```sql
+SELECT * FROM MovieRating
+WHERE created_at >= '2020-02-01' 
+  AND created_at < '2020-03-01'; 
+-- Using < '2020-03-01' is safer than <= '2020-02-29' 
+-- because you don't need to handle leap years or exact times (e.g., 23:59:59).
+```
+
+---
+
+## Summary Comparison
+
+| Feature | 1. Date Functions (`YEAR/MONTH`) | 2. String Match (`LIKE`) | 3. Range Query (`>= AND <`) |
+| :--- | :--- | :--- | :--- |
+| **Readability** | ⭐⭐⭐⭐⭐ (High) | ⭐⭐⭐⭐ (Med-High) | ⭐⭐⭐ (Med) |
+| **Writing Speed**| ⭐⭐⭐⭐ (Fast) | ⭐⭐⭐⭐⭐ (Fastest) | ⭐⭐⭐ (Slow) |
+| **Performance**| ⭐⭐ (Low) | ⭐ (Low) | ⭐⭐⭐⭐⭐ (High) |
+| **Use Case**| Analysis, Small Data | LeetCode, Ad-hoc | **Backend Dev**, Large Data |
+
+
+
